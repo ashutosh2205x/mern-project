@@ -2,19 +2,25 @@ const express = require("express");
 const app = express();
 const PORT = 5000;
 const mongoose = require("mongoose");
-const { MONGO_URI } = require("./server/keys");
-const authRoutes = require("./server/routes/auth");
+const { MONGO_URI } = require("./keys");
+const routes = require("./routes/auth");
+const posts = require("./routes/post");
 
-app.use(express.json());
+require("./models/user");
+require("./models/post");
 
-app.use(authRoutes);
+app.use(express.json()); //middleware that only parses JSON
+app.use(routes);
+app.use(posts);
 
 mongoose.connect(MONGO_URI, {
+  //CONNECTING TO CLOUD MONGO DB ON ATLAS.
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
 
 mongoose.connection.on("connected", () => {
+  //CHECKING CONNECTION
   console.log("connected to mongo!");
 });
 
