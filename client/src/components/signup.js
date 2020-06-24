@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -11,12 +11,11 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
-import { Link } from "@reach/router";
-
+import { Link, navigate } from "@reach/router";
 import NavBar from "./navbar";
 import { Copyright } from "./copyright";
-
-
+import { Snackbar } from "@material-ui/core";
+import { emailRegex } from "../utils/constants";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -30,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.secondary.main,
   },
   form: {
-    width: "100%", // Fix IE 11 issue.
+    width: "100%",
     marginTop: theme.spacing(3),
   },
   submit: {
@@ -39,8 +38,44 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Signup() {
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [IsOpen, setOpen] = React.useState(false);
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   const classes = useStyles();
 
+  function handleSubmit() {
+    if (!emailRegex.test(email)) {
+      return alert("Invalid fields");
+    }
+    fetch(`signup`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: name,
+        email: email,
+        password: password,
+      }),
+    })
+      .then((res) => res.json())
+      .then((jsondata) => {
+        if (jsondata.error) {
+          console.log("api,", jsondata);
+          return alert(jsondata.error);
+        }
+        navigate("/signin");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
   return (
     <>
       <NavBar />
@@ -53,7 +88,7 @@ export default function Signup() {
           <Typography component="h1" variant="h5">
             Sign up
           </Typography>
-          <form className={classes.form} noValidate>
+          <div className={classes.form}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <TextField
@@ -65,6 +100,8 @@ export default function Signup() {
                   id="firstName"
                   label="First Name"
                   autoFocus
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                 />
               </Grid>
 
@@ -77,6 +114,8 @@ export default function Signup() {
                   label="Email Address"
                   name="email"
                   autoComplete="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -88,17 +127,12 @@ export default function Signup() {
                   label="Password"
                   type="password"
                   id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   autoComplete="current-password"
                 />
               </Grid>
-              <Grid item xs={12}>
-                <FormControlLabel
-                  control={
-                    <Checkbox value="allowExtraEmails" color="primary" />
-                  }
-                  label="I agree to terms and conditions as well as Privacy policy."
-                />
-              </Grid>
+              <Grid item xs={12}></Grid>
             </Grid>
             <Button
               type="submit"
@@ -106,17 +140,16 @@ export default function Signup() {
               variant="contained"
               color="primary"
               className={classes.submit}
+              onClick={handleSubmit}
             >
               Sign Up
             </Button>
             <Grid container justify="flex-end">
               <Grid item>
-                <Link to="/signin">
-                  Already have an account? Sign in
-                </Link>
+                <Link to="/signin">Already have an account? Sign in</Link>
               </Grid>
             </Grid>
-          </form>
+          </div>
         </div>
         <Box mt={5}>
           <Copyright />

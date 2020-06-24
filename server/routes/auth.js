@@ -62,7 +62,15 @@ router.post("/signin", (req, res) => {
         if (isMatched) {
           //CREATING A JWT SIGNATURE with user_id AND RANDDOM STRING AND SENDING IT TO USER
           const token = jwt.sign({ _id: saveduser._id }, JWT_TOKEN);
-          res.json({ Message: "Successfully logged in ! ", token: token });
+          res.json({
+            Message: "Successfully logged in ! ",
+            token: token,
+            userdata: {
+              name: saveduser.name,
+              email: saveduser.email,
+              _id: saveduser._id,
+            },
+          });
         } else {
           return res.status(422).send({ Warning: "Invalid password !" });
         }

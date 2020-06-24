@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -11,12 +11,11 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
-import { Link } from "@reach/router";
-
+import { Link, navigate } from "@reach/router";
 import NavBar from "./navbar";
 import { Copyright } from "./copyright";
-
-
+import { emailRegex } from "../utils/constants";
+import { Snackbar } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -40,6 +39,44 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SignIn() {
   const classes = useStyles();
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+
+  function handleSubmit() {
+    if (!emailRegex.test(email) || email === "" || password === "") {
+      return alert("Invalid or empty fields");
+    }
+    fetch(`signin`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: email,
+        password: password,
+      }),
+    }).then((res) => {
+      console.log("res", res);
+      if (res.status === 422) {
+        return alert(`Email id doesn't exist !`);
+      }
+      res
+        .json()
+        .then((jsondata) => {
+          console.log(jsondata);
+          if (jsondata.error) {
+            console.log("api,", jsondata);
+            return alert(jsondata.error);
+          } else
+            return (
+              navigate("/"), localStorage.setItem("user_token", jsondata.token)
+            );
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    });
+  }
 
   return (
     <>
@@ -53,9 +90,8 @@ export default function SignIn() {
           <Typography component="h1" variant="h5">
             Sign In
           </Typography>
-          <form className={classes.form} noValidate>
+          <div className={classes.form} noValidate>
             <Grid container spacing={2}>
-
               <Grid item xs={12}>
                 <TextField
                   variant="outlined"
@@ -66,6 +102,8 @@ export default function SignIn() {
                   name="email"
                   autoComplete="email"
                   autoFocus
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -78,16 +116,11 @@ export default function SignIn() {
                   type="password"
                   id="password"
                   autoComplete="current-password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
               </Grid>
-              <Grid item xs={12}>
-                <FormControlLabel
-                  control={
-                    <Checkbox value="allowExtraEmails" color="primary" />
-                  }
-                  label="I agree to terms and conditions as well as Privacy policy."
-                />
-              </Grid>
+              <Grid item xs={12}></Grid>
             </Grid>
             <Button
               type="submit"
@@ -95,17 +128,16 @@ export default function SignIn() {
               variant="contained"
               color="primary"
               className={classes.submit}
+              onClick={handleSubmit}
             >
               Sign Up
             </Button>
             <Grid container justify="flex-end">
               <Grid item>
-                <Link to="/signup">
-                  New to website? Sign up
-                </Link>
+                <Link to="/signup">New to website? Sign up</Link>
               </Grid>
             </Grid>
-          </form>
+          </div>
         </div>
         <Box mt={5}>
           <Copyright />
