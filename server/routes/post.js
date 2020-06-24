@@ -8,7 +8,6 @@ const Post = mongoose.model("Post");
 //TO CREATE POST
 router.post("/create", loginmiddleware, (req, res) => {
   const { title, body, url } = req.body;
-  console.log("node api ", title, body, url);
   if (!title || !body) {
     return res.status(422).json({ Error: "Please fill all the fields" });
   }

@@ -69,7 +69,15 @@ export default function SignIn() {
             return alert(jsondata.error);
           } else
             return (
-              navigate("/"), localStorage.setItem("user_token", jsondata.token)
+              navigate("/"),
+              localStorage.setItem(
+                "user_token",
+                JSON.stringify(jsondata.token)
+              ),
+              localStorage.setItem(
+                "user_data",
+                JSON.stringify(jsondata.userdata)
+              )
             );
         })
         .catch((err) => {

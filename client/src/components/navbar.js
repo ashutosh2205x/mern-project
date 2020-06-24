@@ -16,11 +16,13 @@ import InboxIcon from "@material-ui/icons/MoveToInbox";
 import MailIcon from "@material-ui/icons/Mail";
 import { Link } from "@reach/router";
 import { InputBase } from "@material-ui/core";
-
+import { UserContext } from "../context/userContext";
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
+import HomeIcon from "@material-ui/icons/Home";
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
-    marginBottom: 20
+    marginBottom: 20,
   },
   menuButton: {
     marginRight: theme.spacing(2),
@@ -60,7 +62,6 @@ const useStyles = makeStyles((theme) => ({
   },
   inputInput: {
     padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
     transition: theme.transitions.create("width"),
     width: "100%",
@@ -72,36 +73,6 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 }));
-
-const list = () => (
-  <div>
-    <List>
-      {["Home", "Profile"].map((text, index) => (
-        <ListItem button key={text}>
-          <ListItemIcon>
-            {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-          </ListItemIcon>
-          <Link to={text.toLowerCase()}>
-            <ListItemText primary={text} />
-          </Link>
-        </ListItem>
-      ))}
-    </List>
-    <Divider />
-    <List>
-      {["SignIn", "Signup"].map((text, index) => (
-        <ListItem button key={text}>
-          <ListItemIcon>
-            {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-          </ListItemIcon>
-          <Link to={text.toLowerCase()}>
-            <ListItemText primary={text} />
-          </Link>
-        </ListItem>
-      ))}
-    </List>
-  </div>
-);
 
 export default function NavBar() {
   const [state, setState] = React.useState({
@@ -122,40 +93,95 @@ export default function NavBar() {
 
   return (
     <>
-      <div className={classes.root}>
-        <AppBar position="static">
-          <Toolbar>
-            <IconButton
-              edge="start"
-              className={classes.menuButton}
-              color="inherit"
-              aria-label="open drawer"
-            >
-              <MenuIcon onClick={toggleDrawer("left", true)} />
-            </IconButton>
-            <Drawer
-              anchor={"left"}
-              open={state["left"]}
-              onClose={toggleDrawer("left", false)}
-            >
-              {list()}
-            </Drawer>
-            <div className={classes.search}>
-              <div className={classes.searchIcon}>
-                <SearchIcon />
-              </div>
-              <InputBase
-                placeholder="Search…"
-                classes={{
-                  root: classes.inputRoot,
-                  input: classes.inputInput,
-                }}
-                inputProps={{ "aria-label": "search" }}
-              />
+      <UserContext.Consumer>
+        {(data) => {
+          return (
+            <div className={classes.root}>
+              <AppBar position="static">
+                <Toolbar>
+                  <IconButton
+                    edge="start"
+                    className={classes.menuButton}
+                    color="inherit"
+                    aria-label="open drawer"
+                  >
+                    <MenuIcon onClick={toggleDrawer("left", true)} />
+                  </IconButton>
+                  <Drawer
+                    anchor={"left"}
+                    open={state["left"]}
+                    onClose={toggleDrawer("left", false)}
+                  >
+                    {list(data)}
+                  </Drawer>
+                  <div className={classes.search}>
+                    <div className={classes.searchIcon}>
+                      <SearchIcon />
+                    </div>
+                    <InputBase
+                      placeholder="Search…"
+                      classes={{
+                        root: classes.inputRoot,
+                        input: classes.inputInput,
+                      }}
+                      inputProps={{ "aria-label": "search" }}
+                    />
+                  </div>
+                </Toolbar>
+              </AppBar>
             </div>
-          </Toolbar>
-        </AppBar>
-      </div>
+          );
+        }}
+      </UserContext.Consumer>
     </>
   );
 }
+
+const list = (data) => (
+  (
+    <div>
+      <List>
+        <ListItem button>
+          <ListItemIcon>
+            <AccountCircleIcon />
+          </ListItemIcon>
+          <ListItemText primary={"Hello "} />
+          <Link to={"profile"}>
+            <ListItemText primary={data.name + "!"} />
+          </Link>
+        </ListItem>
+
+        <ListItem button>
+          <ListItemIcon>
+            <HomeIcon />
+          </ListItemIcon>
+          <Link to={"/"}>
+            <ListItemText primary={"Home"} />
+          </Link>
+        </ListItem>
+
+        <ListItem button>
+          <ListItemIcon>
+            <HomeIcon />
+          </ListItemIcon>
+          <Link to={"create"}>
+            <ListItemText primary={"Create a post"} />
+          </Link>
+        </ListItem>
+      </List>
+      <Divider />
+      <List>
+        {["SignIn", "Signup"].map((text, index) => (
+          <ListItem button key={text}>
+            <ListItemIcon>
+              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+            </ListItemIcon>
+            <Link to={text.toLowerCase()}>
+              <ListItemText primary={text} />
+            </Link>
+          </ListItem>
+        ))}
+      </List>
+    </div>
+  )
+);
