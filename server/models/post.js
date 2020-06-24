@@ -9,17 +9,8 @@ const postSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  text: {
+  url: {
     type: String,
-    default: "No Post",
-  },
-  photo: {
-    type: String,
-    default: "No Post",
-  },
-  video: {
-    type: String,
-    default: "No Post",
   },
   postedBy: {
     type: ObjectId,

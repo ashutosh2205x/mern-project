@@ -29,31 +29,65 @@ export default function CreateCard() {
   const [text, setText] = useState("");
   const [file_name, setFileName] = useState("Upload File here");
   const [file, uploadFile] = useState("");
-  const [url, setURL] = useState("");
-
+  const token =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWYzMjkzNzZjZmY2NDE3MWMwYzBlMjgiLCJpYXQiOjE1OTI5OTUwOTV9.Rg9NZr1LzflEmRn1tkPkF-8S2-1Q9VQZ6G8oA8CmaHI";
+  let url = "";
   const classes = useStyles();
 
   function createPost() {
-    console.log(title, text, file);
-
     if (file) {
       const data = new FormData();
       data.append("file", file);
       data.append("upload_preset", "socio-app");
       data.append("cloud_name", "ashutosh2205");
+
       fetch(`https://api.cloudinary.com/v1_1/ashtuosh2205/upload`, {
         method: "POST",
         body: data,
       })
         .then((res) => res.json())
         .then((api_data) => {
-          console.log(api_data);
-          setURL(api_data.url);
+          console.log("cloudinary", api_data);
+          url = api_data.url;
+          console.log(title, text, file, url);
+          callNodeAPI()
         })
         .catch((Err) => {
           console.log(Err);
         });
-    }
+     
+  }
+
+  function callNodeAPI(){
+    fetch(`create`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        title,
+        url,
+        body: text,
+      }),
+    }).then((res) => {
+      if (res.status === 422) {
+        return alert(`Something went wrong ! Please try again!`);
+      }
+      res
+        .json()
+        .then((jsondata) => {
+          console.log("jsondata", jsondata);
+          if (jsondata.error) {
+            console.log("api,", jsondata);
+            return alert(jsondata.error);
+          } else return console.log("jsondatasuccess", jsondata);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    });
+  }
   }
 
   return (

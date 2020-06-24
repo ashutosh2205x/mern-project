@@ -8,14 +8,14 @@ const Post = mongoose.model("Post");
 //TO CREATE POST
 router.post("/create", loginmiddleware, (req, res) => {
   const { title, body, url } = req.body;
-
+  console.log("node api ", title, body, url);
   if (!title || !body) {
     return res.status(422).json({ Error: "Please fill all the fields" });
   }
   const newpost = new Post({
     title,
     body,
-    url,
+    url : url,
     postedBy: req.user,
   });
 
@@ -42,14 +42,15 @@ router.get("/all", (req, res) => {
 });
 
 //GET MY POSTS
-router.get("/myposts", loginmiddleware,(req, res) => {
-    console.log()
+router.get("/myposts", loginmiddleware, (req, res) => {
+  console.log();
   Post.find({ postedBy: req.user._id })
     .populate("PostedBy", "_id name")
     .then((mypost) => {
       res.json({ posts: mypost });
-    }).catch(Err=>{
-        console.log(Err)
+    })
+    .catch((Err) => {
+      console.log(Err);
     });
 });
 module.exports = router;
