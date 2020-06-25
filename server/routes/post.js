@@ -7,7 +7,7 @@ const Post = mongoose.model("Post");
 
 //TO CREATE POST
 router.post("/create", loginmiddleware, (req, res) => {
-  const { title, body, url } = req.body;
+  const { title, body, url, date_created } = req.body;
   if (!title || !body) {
     return res.status(422).json({ Error: "Please fill all the fields" });
   }
@@ -15,6 +15,7 @@ router.post("/create", loginmiddleware, (req, res) => {
     title,
     body,
     url: url,
+    date_created: new Date().toLocaleString(),
     postedBy: req.user,
   });
 
@@ -53,6 +54,8 @@ router.get("/myposts", loginmiddleware, (req, res) => {
     });
 });
 
+
+//DELETE MY POST
 router.delete("/delete/:post_id", (req, res) => {
   Post.deleteOne({ _id: req.body._id })
     .then(

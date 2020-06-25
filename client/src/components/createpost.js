@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardActionArea from "@material-ui/core/CardActionArea";
@@ -9,6 +9,7 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import NavBar from "./navbar";
 import { TextField } from "@material-ui/core";
+import { navigate } from "@reach/router";
 
 const useStyles = makeStyles({
   root: {
@@ -29,8 +30,11 @@ export default function CreateCard() {
   const [text, setText] = useState("");
   const [file_name, setFileName] = useState("Upload File here");
   const [file, uploadFile] = useState("");
-  const token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWYzMjkzNzZjZmY2NDE3MWMwYzBlMjgiLCJpYXQiOjE1OTI5OTUwOTV9.Rg9NZr1LzflEmRn1tkPkF-8S2-1Q9VQZ6G8oA8CmaHI";
+  const [token, setToken] = useState("");
+
+  useEffect(() => {
+    setToken(JSON.parse(localStorage.getItem("user_token")));
+  });
   let url = "";
   const classes = useStyles();
 
@@ -50,44 +54,44 @@ export default function CreateCard() {
           console.log("cloudinary", api_data);
           url = api_data.url;
           console.log(title, text, file, url);
-          callNodeAPI()
+          callNodeAPI();
         })
         .catch((Err) => {
           console.log(Err);
         });
-     
-  }
+    }
 
-  function callNodeAPI(){
-    fetch(`create`, {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        title,
-        url,
-        body: text,
-      }),
-    }).then((res) => {
-      if (res.status === 422) {
-        return alert(`Something went wrong ! Please try again!`);
-      }
-      res
-        .json()
-        .then((jsondata) => {
-          console.log("jsondata", jsondata);
-          if (jsondata.error) {
-            console.log("api,", jsondata);
-            return alert(jsondata.error);
-          } else return console.log("jsondatasuccess", jsondata);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    });
-  }
+    function callNodeAPI() {
+      fetch(`create`, {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          title,
+          url,
+          body: text,
+        }),
+      }).then((res) => {
+        if (res.status === 422) {
+          return alert(`Something went wrong ! Please try again!`);
+        }
+        res
+          .json()
+          .then((jsondata) => {
+            console.log("jsondata", jsondata);
+            if (jsondata.error) {
+              console.log("api,", jsondata);
+              return alert(jsondata.error);
+            } else
+              return alert("Post successfully create"), navigate("/profile");
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      });
+    }
   }
 
   return (

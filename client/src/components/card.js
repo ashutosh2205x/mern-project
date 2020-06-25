@@ -42,9 +42,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function PostCard(post) {
-  let { body, postedBy, title, url, _id } = post.post;
-  console.log(post.post)
+export default function PostCard(props) {
+  let { body, postedBy, title, url, _id, date_created } = props.post;
+  // console.log(props.post)
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
   const [isDeleted, Dodelete] = React.useState(false);
@@ -76,13 +76,8 @@ export default function PostCard(post) {
             <AccountCircleIcon />
           </Avatar>
         }
-        action={
-          <IconButton aria-label="settings">
-            <MoreVertIcon />
-          </IconButton>
-        }
-        title={postedBy.name}
-        // subheader="September 14, 2016"
+        title={title}
+        subheader={postedBy.name ? postedBy.name : `By You` + date_created}
       />
       {url && url.toString().includes(".mp4") ? (
         <CardMedia component="iframe" title="video" src={url} />
@@ -101,9 +96,13 @@ export default function PostCard(post) {
         <IconButton aria-label="share">
           <ShareIcon />
         </IconButton>
-        <IconButton aria-label="delete" onClick={() => deletePost(_id)}>
-          <DeleteOutlinedIcon />
-        </IconButton>
+        {window.location.pathname === "/profile" ? (
+          <IconButton aria-label="delete" onClick={() => deletePost(_id)}>
+            <DeleteOutlinedIcon />
+          </IconButton>
+        ) : (
+          ""
+        )}
       </CardActions>
     </Card>
   );
