@@ -1,11 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles, fade } from "@material-ui/core/styles";
 import MenuIcon from "@material-ui/icons/Menu";
-import SearchIcon from "@material-ui/icons/Search";
 import Drawer from "@material-ui/core/Drawer";
 import List from "@material-ui/core/List";
 import Divider from "@material-ui/core/Divider";
@@ -19,8 +18,11 @@ import { InputBase } from "@material-ui/core";
 import { UserContext } from "../context/userContext";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import HomeIcon from "@material-ui/icons/Home";
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import { render } from "react-dom";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import PublicIcon from "@material-ui/icons/Public";
+import CreateIcon from "@material-ui/icons/Create";
+
+
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -84,7 +86,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function NavBar() {
-  const [state, setState] = React.useState({
+  const [state, setState] = useState({
     left: false,
   });
   const classes = useStyles();
@@ -100,11 +102,11 @@ export default function NavBar() {
     setState({ ...state, [anchor]: open });
   };
 
-  const deAuthorize =()=>{
+  const deAuthorize = () => {
     localStorage.clear();
-    alert('You have succesfully logged out!');
+    alert("You have succesfully logged out!");
     navigate("signin");
-  }
+  };
 
   return (
     <>
@@ -147,9 +149,15 @@ export default function NavBar() {
                             <ListItemIcon>
                               <AccountCircleIcon />
                             </ListItemIcon>
-                            <ListItemText primary={"Hello "} />
-                            <Link to={"profile"}>
-                              <ListItemText primary={data.name + "!"} />
+                            <ListItemText primary={`Hello ${data.name} !`} />
+                          </ListItem>
+
+                          <ListItem button>
+                            <ListItemIcon>
+                              <PublicIcon />
+                            </ListItemIcon>
+                            <Link to={"/"}>
+                              <ListItemText primary={"Home"} />
                             </Link>
                           </ListItem>
 
@@ -164,37 +172,28 @@ export default function NavBar() {
 
                           <ListItem button>
                             <ListItemIcon>
-                              <HomeIcon />
+                              <CreateIcon />
                             </ListItemIcon>
-                            <Link to={"create"}>
+                            <Link to={"/create"}>
                               <ListItemText primary={"Create a post"} />
                             </Link>
                           </ListItem>
                         </List>
                         <Divider />
-                        <ListItem button >
-                            <ListItemIcon>
-                              <ExitToAppIcon />
-                            </ListItemIcon>
-                              <ListItemText primary={"Logout"} onClick={deAuthorize} style={{color:'red'}}/>
-                          </ListItem>
+                        <ListItem button>
+                          <ListItemIcon>
+                            <ExitToAppIcon />
+                          </ListItemIcon>
+                          <ListItemText
+                            primary={"Logout"}
+                            onClick={deAuthorize}
+                            style={{ color: "red" }}
+                          />
+                        </ListItem>
                       </>
                     )}
-
                   </Drawer>
-                  <div className={classes.search}>
-                    <div className={classes.searchIcon}>
-                      <SearchIcon />
-                    </div>
-                    <InputBase
-                      placeholder="Search…"
-                      classes={{
-                        root: classes.inputRoot,
-                        input: classes.inputInput,
-                      }}
-                      inputProps={{ "aria-label": "search" }}
-                    />
-                  </div>
+                  
                   <Typography
                     variant="body2"
                     color="textSecondary"
