@@ -7,9 +7,7 @@ export function Copyright() {
     <>
       <Typography variant="body2" color="textSecondary" align="center">
         {"Copyright © "}
-        <Link to="inherit" href="https://material-ui.com/">
-          Your Website
-        </Link>{" "}
+         Socio App &nbsp;
         {new Date().getFullYear()}
         {"."}
       </Typography>

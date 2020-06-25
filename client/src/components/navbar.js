@@ -14,11 +14,13 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import InboxIcon from "@material-ui/icons/MoveToInbox";
 import MailIcon from "@material-ui/icons/Mail";
-import { Link } from "@reach/router";
+import { Link, navigate } from "@reach/router";
 import { InputBase } from "@material-ui/core";
 import { UserContext } from "../context/userContext";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import HomeIcon from "@material-ui/icons/Home";
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import { render } from "react-dom";
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -72,6 +74,13 @@ const useStyles = makeStyles((theme) => ({
       },
     },
   },
+  showname: {
+    position: "absolute",
+    right: 0,
+    fontWeight: 600,
+    color: "white",
+    padding: 20,
+  },
 }));
 
 export default function NavBar() {
@@ -91,10 +100,17 @@ export default function NavBar() {
     setState({ ...state, [anchor]: open });
   };
 
+  const deAuthorize =()=>{
+    localStorage.clear();
+    alert('You have succesfully logged out!');
+    navigate("signin");
+  }
+
   return (
     <>
       <UserContext.Consumer>
         {(data) => {
+          console.log(data);
           return (
             <div className={classes.root}>
               <AppBar position="static">
@@ -112,7 +128,60 @@ export default function NavBar() {
                     open={state["left"]}
                     onClose={toggleDrawer("left", false)}
                   >
-                    {list(data)}
+                    {Object.keys(data).length === 0 ? (
+                      <List>
+                        {["SignIn", "Signup"].map((text, index) => (
+                          <ListItem button key={text}>
+                            <ListItemIcon>
+                              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                            </ListItemIcon>
+                            <Link to={`/${text.toLowerCase()}`}>
+                              <ListItemText primary={text} />
+                            </Link>
+                          </ListItem>
+                        ))}
+                      </List>
+                    ) : (
+                      <>
+                        <List>
+                          <ListItem button>
+                            <ListItemIcon>
+                              <AccountCircleIcon />
+                            </ListItemIcon>
+                            <ListItemText primary={"Hello "} />
+                            <Link to={"profile"}>
+                              <ListItemText primary={data.name + "!"} />
+                            </Link>
+                          </ListItem>
+
+                          <ListItem button>
+                            <ListItemIcon>
+                              <HomeIcon />
+                            </ListItemIcon>
+                            <Link to={"/"}>
+                              <ListItemText primary={"Home"} />
+                            </Link>
+                          </ListItem>
+
+                          <ListItem button>
+                            <ListItemIcon>
+                              <HomeIcon />
+                            </ListItemIcon>
+                            <Link to={"create"}>
+                              <ListItemText primary={"Create a post"} />
+                            </Link>
+                          </ListItem>
+                        </List>
+                        <Divider />
+                        <ListItem button >
+                            <ListItemIcon>
+                              <ExitToAppIcon />
+                            </ListItemIcon>
+                              <ListItemText primary={"Logout"} onClick={deAuthorize} style={{color:'red'}}/>
+                          </ListItem>
+                      </>
+                    )}
+
                   </Drawer>
                   <div className={classes.search}>
                     <div className={classes.searchIcon}>
@@ -127,6 +196,14 @@ export default function NavBar() {
                       inputProps={{ "aria-label": "search" }}
                     />
                   </div>
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    component="p"
+                    className={classes.showname}
+                  >
+                    {data.name}
+                  </Typography>
                 </Toolbar>
               </AppBar>
             </div>
@@ -136,52 +213,3 @@ export default function NavBar() {
     </>
   );
 }
-
-const list = (data) => (
-  (
-    <div>
-      <List>
-        <ListItem button>
-          <ListItemIcon>
-            <AccountCircleIcon />
-          </ListItemIcon>
-          <ListItemText primary={"Hello "} />
-          <Link to={"profile"}>
-            <ListItemText primary={data.name + "!"} />
-          </Link>
-        </ListItem>
-
-        <ListItem button>
-          <ListItemIcon>
-            <HomeIcon />
-          </ListItemIcon>
-          <Link to={"/"}>
-            <ListItemText primary={"Home"} />
-          </Link>
-        </ListItem>
-
-        <ListItem button>
-          <ListItemIcon>
-            <HomeIcon />
-          </ListItemIcon>
-          <Link to={"create"}>
-            <ListItemText primary={"Create a post"} />
-          </Link>
-        </ListItem>
-      </List>
-      <Divider />
-      <List>
-        {["SignIn", "Signup"].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>
-              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-            </ListItemIcon>
-            <Link to={text.toLowerCase()}>
-              <ListItemText primary={text} />
-            </Link>
-          </ListItem>
-        ))}
-      </List>
-    </div>
-  )
-);
