@@ -110,7 +110,6 @@ export default function NavBar() {
     <>
       <UserContext.Consumer>
         {(data) => {
-          console.log(data);
           return (
             <div className={classes.root}>
               <AppBar position="static">
@@ -158,8 +157,8 @@ export default function NavBar() {
                             <ListItemIcon>
                               <HomeIcon />
                             </ListItemIcon>
-                            <Link to={"/"}>
-                              <ListItemText primary={"Home"} />
+                            <Link to={"/profile"}>
+                              <ListItemText primary={"My profile"} />
                             </Link>
                           </ListItem>
 
