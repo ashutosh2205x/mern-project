@@ -14,7 +14,7 @@ router.post("/create", loginmiddleware, (req, res) => {
   const newpost = new Post({
     title,
     body,
-    url : url,
+    url: url,
     postedBy: req.user,
   });
 
@@ -42,14 +42,25 @@ router.get("/all", (req, res) => {
 
 //GET MY POSTS
 router.get("/myposts", loginmiddleware, (req, res) => {
-  console.log();
+  console.log(req.body)
   Post.find({ postedBy: req.user._id })
     .populate("PostedBy", "_id name")
     .then((mypost) => {
-      res.json({ posts: mypost });
+      res.json({ posts: mypost  , body: req.body});
     })
     .catch((Err) => {
       console.log(Err);
+    });
+});
+
+router.delete("/delete/:post_id", (req, res) => {
+  Post.deleteOne({ _id: req.body._id })
+    .then(
+      res.send({ message: `post deleted ${req.body._id}` }),
+      res.render("home.js")
+    )
+    .catch((err) => {
+      console.log(err);
     });
 });
 module.exports = router;

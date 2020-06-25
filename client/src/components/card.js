@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
@@ -14,6 +14,7 @@ import FavoriteIcon from "@material-ui/icons/Favorite";
 import ShareIcon from "@material-ui/icons/Share";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
+import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -42,11 +43,31 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function PostCard(post) {
-  let { body, postedBy, title, url } = post.post;
-  url = url.toString();
+  let { body, postedBy, title, url, _id } = post.post;
+  console.log(post.post)
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
+  const [isDeleted, Dodelete] = React.useState(false);
 
+  function deletePost(id) {
+    if (window.confirm("Confirm?")) {
+      console.log(id);
+      fetch("/delete/:id", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          _id: id,
+        }),
+      }).then((res) => {
+        res.json().then((data) => {
+          console.log(data);
+          return () => Dodelete((isDeleted) => true);
+        });
+      });
+    } else console.log("Not deleted");
+  }
   return (
     <Card className={classes.root}>
       <CardHeader
@@ -60,10 +81,10 @@ export default function PostCard(post) {
             <MoreVertIcon />
           </IconButton>
         }
-        title={title}
+        title={postedBy.name}
         // subheader="September 14, 2016"
       />
-      {url.toString().includes(".mp4") ? (
+      {url && url.toString().includes(".mp4") ? (
         <CardMedia component="iframe" title="video" src={url} />
       ) : (
         <CardMedia className={classes.media} image={url} />
@@ -79,6 +100,9 @@ export default function PostCard(post) {
         </IconButton>
         <IconButton aria-label="share">
           <ShareIcon />
+        </IconButton>
+        <IconButton aria-label="delete" onClick={() => deletePost(_id)}>
+          <DeleteOutlinedIcon />
         </IconButton>
       </CardActions>
     </Card>
