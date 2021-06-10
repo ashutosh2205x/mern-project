@@ -52,16 +52,15 @@ export default function CreateCard() {
         .then((res) => res.json())
         .then((api_data) => {
           console.log("cloudinary", api_data);
-          url = api_data.url;
-          console.log(title, text, file, url);
-          callNodeAPI();
+          const { title, secure_url } = api_data;
+          callUploadFileAPI(secure_url);
         })
         .catch((Err) => {
           console.log(Err);
         });
     }
 
-    function callNodeAPI() {
+    function callUploadFileAPI(url) {
       fetch(`create`, {
         method: "post",
         headers: {
@@ -69,8 +68,8 @@ export default function CreateCard() {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          title,
-          url,
+          title: file_name,
+          url: url,
           body: text,
         }),
       }).then((res) => {
@@ -82,7 +81,7 @@ export default function CreateCard() {
           .then((jsondata) => {
             console.log("jsondata", jsondata);
             if (jsondata.error) {
-              console.log("api,", jsondata);
+              console.log("error,", jsondata);
               return alert(jsondata.error);
             } else
               return alert("Post successfully create"), navigate("/profile");

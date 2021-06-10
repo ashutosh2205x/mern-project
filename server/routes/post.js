@@ -9,7 +9,7 @@ const Post = mongoose.model("Post");
 router.post("/create", loginmiddleware, (req, res) => {
   const { title, body, url, date_created } = req.body;
   if (!title || !body) {
-    return res.status(422).json({ Error: "Please fill all the fields" });
+    return res.status(422).json({ error: "Please fill all the fields" });
   }
   const newpost = new Post({
     title,
@@ -43,17 +43,16 @@ router.get("/all", (req, res) => {
 
 //GET MY POSTS
 router.get("/myposts", loginmiddleware, (req, res) => {
-  console.log(req.body)
+  console.log(req.body);
   Post.find({ postedBy: req.user._id })
     .populate("PostedBy", "_id name")
     .then((mypost) => {
-      res.json({ posts: mypost  , body: req.body});
+      res.json({ posts: mypost, body: req.body });
     })
     .catch((Err) => {
       console.log(Err);
     });
 });
-
 
 //DELETE MY POST
 router.delete("/delete/:post_id", (req, res) => {
