@@ -48,6 +48,7 @@ router.post("/signup", (req, res) => {
 
 //SIGN IN ROUTE
 router.post("/signin", (req, res) => {
+  console.log(req.body);
   const { email, password } = req.body;
   if (!email || !password) {
     return res.status(422).send({ Error: "Email or password field is empty" });
