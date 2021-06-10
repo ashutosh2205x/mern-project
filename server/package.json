@@ -4,8 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "mon": "nodemon index.js"
+    "mon": "nodemon index.js",
+    "build": "cd client && npm run build",
+    "install-client-pkgs": "cd client && npm i",
+    "heroku-postbuild": "npm run install-client-pkgs && npm run build"
   },
   "keywords": [],
   "author": "",

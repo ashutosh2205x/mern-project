@@ -77,12 +77,20 @@ export default function PostCard(props) {
           </Avatar>
         }
         title={title}
-        subheader={postedBy.name ? postedBy.name : `By You` + date_created}
+        subheader={
+          postedBy.name
+            ? postedBy.name
+            : `By You, on ` + new Date(date_created).toLocaleDateString()
+        }
       />
       {url && url.toString().includes(".mp4") ? (
         <CardMedia component="iframe" title="video" src={url} />
       ) : (
-        <CardMedia className={classes.media} image={url} />
+        <CardMedia
+          className={classes.media}
+          image={url}
+          style={{ resize: "unset" }}
+        />
       )}
       <CardContent>
         <Typography variant="body2" color="textSecondary" component="p">

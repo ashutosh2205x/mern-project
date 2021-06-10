@@ -28,6 +28,10 @@ mongoose.connection.on("error", (err) => {
   console.log("Error! : ", err);
 });
 
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static("client/build"));
+}
+
 app.listen(PORT, () => {
   console.log("SERVER READY");
 });

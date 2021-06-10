@@ -52,7 +52,7 @@ export default function CreateCard() {
         .then((res) => res.json())
         .then((api_data) => {
           console.log("cloudinary", api_data);
-          const { title, secure_url } = api_data;
+          const { secure_url } = api_data;
           callUploadFileAPI(secure_url);
         })
         .catch((Err) => {
@@ -68,7 +68,7 @@ export default function CreateCard() {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          title: file_name,
+          title: title ?? "My post",
           url: url,
           body: text,
         }),
