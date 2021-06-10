@@ -48,14 +48,13 @@ router.post("/signup", (req, res) => {
 
 //SIGN IN ROUTE
 router.post("/signin", (req, res) => {
-  console.log(req.body);
   const { email, password } = req.body;
   if (!email || !password) {
-    return res.status(422).send({ Error: "Email or password field is empty" });
+    return res.status(422).send({ error: "Email or password field is empty" });
   }
   User.findOne({ email: email }).then((saveduser) => {
     if (!saveduser) {
-      return res.status(422).send({ Warning: "Invalid email or password" });
+      return res.status(422).send({ error: "Invalid email or password" });
     }
     bcrypt
       .compare(password, saveduser.password)

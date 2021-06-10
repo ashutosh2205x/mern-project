@@ -58,7 +58,8 @@ export default function SignIn() {
     }).then((res) => {
       console.log("res", res);
       if (res.status === 422) {
-        return alert(`Email id doesn't exist !`);
+        // return;
+        // return alert(`Email id doesn't exist !`);
       }
       res
         .json()
